@@ -245,6 +245,64 @@ score.
 
 [![Análise da Gravidade de Artrose no Joelho](https://img.youtube.com/vi/gl28zQAs_rk/0.jpg)](https://www.youtube.com/watch?v=gl28zQAs_rk "Análise da Gravidade de Artrose no Joelho")
 
+## Deployment
+
+### Model weights
+
+Trained weights are **not** in the repository (GitHub's 100 MB per-file limit).
+The app downloads them automatically on first run via `gdown` (Google Drive id
+`1vPS_j2AW3M1W8GydREEDw6CDENSgVwCy`) and caches them at
+`src/models/model_Xception_ft.hdf5`.
+
+### Run locally
+
+```shell
+pip install -r requirements.txt
+streamlit run app/app.py
+# or: python -m streamlit run app/app.py
+```
+
+> Required env var (already set inside `app/app.py`):
+> `TF_USE_LEGACY_KERAS=1` — the `.hdf5` weights were saved with Keras 2 and
+> cannot be loaded by Keras 3.
+
+### Deploy on Hugging Face Spaces (free, recommended)
+
+1. Create a new Space → **SDK: Docker** → Blank.
+2. Push this repository into the Space (or connect the GitHub repo in
+   **Settings → Repository**).
+3. Add this frontmatter to the Space's `README.md`:
+
+   ```yaml
+   ---
+   title: Knee Xray AI
+   emoji: 🦴
+   colorFrom: blue
+   colorTo: gray
+   sdk: docker
+   app_port: 8501
+   ---
+   ```
+
+4. The `Dockerfile` builds the image; `app_port: 8501` exposes Streamlit.
+5. Optional (faster cold start): drag `model_Xception_ft.hdf5` into
+   `src/models/` in the Space file browser so it is not downloaded each time.
+
+### Deploy on Streamlit Community Cloud (free)
+
+1. <https://share.streamlit.io> → **New app** → pick the GitHub repo
+   `akshau094/Kee-ml`.
+2. **Main file path:** `streamlit_app.py`.
+3. Advanced settings → **Python version 3.12**.
+4. Deploy. The model downloads itself on first load.
+
+### Docker (any VPS / Render / Railway / Fly.io)
+
+```shell
+docker build -t knee-xray-ai .
+docker run -p 8501:8501 knee-xray-ai
+```
+
 ## References
 
 - [Complex data mining](https://www.ic.unicamp.br/~mdc/) at

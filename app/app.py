@@ -1,9 +1,28 @@
+import os
+from pathlib import Path
+
+os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
+
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
 import tensorflow as tf
 from PIL import Image
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+MODEL_PATH = ROOT_DIR / "src" / "models" / "model_Xception_ft.hdf5"
+ICON_PATH = ROOT_DIR / "app" / "img" / "mdc.png"
+MODEL_DRIVE_ID = "1vPS_j2AW3M1W8GydREEDw6CDENSgVwCy"
+
+
+def ensure_model():
+    if MODEL_PATH.exists():
+        return
+    import gdown
+
+    MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+    gdown.download(id=MODEL_DRIVE_ID, output=str(MODEL_PATH), quiet=False)
 
 
 def make_gradcam_heatmap(grad_model, img_array, pred_index=None):
@@ -45,7 +64,7 @@ def save_and_display_gradcam(img, heatmap, alpha=0.4):
     return superimposed_img
 
 
-icon = Image.open("app/img/mdc.png")
+icon = Image.open(ICON_PATH)
 st.set_page_config(
     page_title="Severity Analysis Knee Abnormality Detection",
     page_icon=icon,
@@ -53,7 +72,8 @@ st.set_page_config(
 
 class_names = ["Healthy", "Doubtful", "Minimal", "Moderate", "Severe"]
 
-model = tf.keras.models.load_model("./src/models/model_Xception_ft.hdf5")
+ensure_model()
+model = tf.keras.models.load_model(str(MODEL_PATH))
 target_size = (224, 224)
 
 # Grad-CAM
