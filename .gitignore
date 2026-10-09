@@ -1,0 +1,22 @@
+.DS_Store
+*.ipynb_checkpoints
+
+# Model weights (too large for GitHub; download from README links)
+*.hdf5
+*.h5
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Datasets (too large; download separately)
+dataset/
+data/
+_dl/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# OS
+Thumbs.db
