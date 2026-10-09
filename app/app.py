@@ -14,14 +14,28 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 MODEL_PATH = ROOT_DIR / "src" / "models" / "model_Xception_ft.hdf5"
 ICON_PATH = ROOT_DIR / "app" / "img" / "mdc.png"
 MODEL_DRIVE_ID = "1vPS_j2AW3M1W8GydREEDw6CDENSgVwCy"
+HF_MODEL_URL = (
+    "https://huggingface.co/Saitwal094/knee-xray-model/resolve/main/"
+    "model_Xception_ft.hdf5"
+)
 
 
 def ensure_model():
-    if MODEL_PATH.exists():
+    if MODEL_PATH.exists() and MODEL_PATH.stat().st_size > 1_000_000:
         return
-    import gdown
+    import urllib.request
 
     MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+    tmp = MODEL_PATH.with_suffix(".part")
+    try:
+        urllib.request.urlretrieve(HF_MODEL_URL, str(tmp))
+        if tmp.stat().st_size > 1_000_000:
+            tmp.replace(MODEL_PATH)
+            return
+    except Exception:
+        pass
+    import gdown
+
     gdown.download(id=MODEL_DRIVE_ID, output=str(MODEL_PATH), quiet=False)
 
 
