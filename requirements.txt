@@ -1,0 +1,13 @@
+tensorflow==2.10.0
+numpy==1.23.3
+pandas==1.5.0
+matplotlib==3.6.0
+seaborn==0.11.2
+scikit-learn==1.1.2
+streamlit
+pillow
+reportlab
+h5py
+jupyter
+gdown
+kaggle
