@@ -41,10 +41,19 @@ def make_gradcam_heatmap(grad_model, img_array, pred_index=None):
     return heatmap.numpy()
 
 
+def get_jet_colormap():
+    if hasattr(cm, "get_cmap"):
+        return cm.get_cmap("jet")
+
+    import matplotlib
+
+    return matplotlib.colormaps["jet"]
+
+
 def save_and_display_gradcam(img, heatmap, alpha=0.4):
     heatmap = np.uint8(255 * heatmap)
 
-    jet = cm.get_cmap("jet")
+    jet = get_jet_colormap()
 
     jet_colors = jet(np.arange(256))[:, :3]
     jet_heatmap = jet_colors[heatmap]
